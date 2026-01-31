@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save Me Ink - Reduce PDF Ink Usage</title>
+    <title>Save Me Ink - Reduce PDF & PowerPoint Ink Usage</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAABwklEQVR4nO2XPUsDQRCGn0QUJRYWgqWF/8DKwsLGQrCw0EZLC7EQtLCwEAQbwcJCsLAQBBsLC0GwECwsxEIsBMFCEOwEC0EQBAvFQuwEC0FwZODucjl2L3fJxQvugIVjb2ffnZ2ZXYiIiIiIiPhfKAGvwK0/1QBJYAt49Kc6kPSnJPDk73tZYX9YDkgCn36fAPq8j8jnHdDjrz8L9Ad1QhKY8fv4LkjLO3FuAMdAL/AMFICxIM8CZqDmPXn4LkhJIjV/Tn8+SjzaAOl4/CjgFLAOjAF3/jwMTAEbdvICsAscActBCvLAot8ngCFgE9gG0jLJJbDu9ymZaBi4Fkl2gxQcA9v+PAxMAhvADpAWI1wBG36fkkmGgRuRZC9IwSEQ9/sEMAJsAnEgLePfABt+HwcGgTuRYi9IQRzI+30CGAa2gF0gJZNfARv+Oi6T3Ikk+0EK4kDW7weBYSAO7AEpmfwK2PDXMZlkT6TYD1IQB3J+PwgMA3FgH0jJ5FdA3F/HgEGR4kCkOAhSEAdyfj8ADANxYB9IyeSXQNxfx4BBkeJQpDgMUhAH8n4/AAwDKWAfSMvkl0DCX8eBfpHiCEgFPRsR8e/wDZQPjGBwBYydAAAAAElFTkSuQmCC">
     <link rel="apple-touch-icon" href="data:image/png;base64,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">
@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -108,6 +109,22 @@
             color: #707080;
         }
 
+        .supported-formats {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .format-badge {
+            background: rgba(102, 126, 234, 0.2);
+            color: #a0a0ff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
         .file-info {
             display: none;
             margin-top: 1.5rem;
@@ -130,6 +147,13 @@
             font-size: 0.85rem;
             color: #707080;
             margin-top: 0.25rem;
+        }
+
+        .file-type {
+            font-size: 0.75rem;
+            color: #667eea;
+            margin-top: 0.25rem;
+            text-transform: uppercase;
         }
 
         .btn {
@@ -333,6 +357,12 @@
                 flex-direction: column;
                 gap: 1rem;
             }
+
+            .supported-formats {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
         }
 
         input[type="file"] {
@@ -350,18 +380,23 @@
             <div class="logo-icon">🖨️</div>
             <h1>Save Me Ink</h1>
         </div>
-        <p class="tagline">Convert PDFs to ink-minimized versions. Save ink, save money.</p>
+        <p class="tagline">Convert documents to ink-minimized versions. Save ink, save money.</p>
 
         <div class="upload-zone" id="uploadZone">
             <div class="upload-icon">📄</div>
-            <p class="upload-text">Drop your PDF here or click to upload</p>
+            <p class="upload-text">Drop your file here or click to upload</p>
             <p class="upload-hint">100% private — processed in your browser</p>
-            <input type="file" id="fileInput" accept=".pdf,application/pdf">
+            <div class="supported-formats">
+                <span class="format-badge">PDF</span>
+                <span class="format-badge">PPTX</span>
+            </div>
+            <input type="file" id="fileInput" accept=".pdf,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation">
         </div>
 
         <div class="file-info" id="fileInfo">
             <div class="file-name" id="fileName"></div>
             <div class="file-size" id="fileSize"></div>
+            <div class="file-type" id="fileType"></div>
         </div>
 
         <div class="error-message" id="errorMessage"></div>
@@ -389,11 +424,11 @@
                 </div>
                 <div class="stat">
                     <div class="stat-value" id="pagesProcessed">-</div>
-                    <div class="stat-label">Pages</div>
+                    <div class="stat-label" id="pagesLabel">Pages</div>
                 </div>
             </div>
             <button class="btn btn-success visible" id="downloadBtn">
-                ⬇️ Download Ink-Minimized PDF
+                ⬇️ Download Ink-Minimized File
             </button>
         </div>
 
@@ -435,6 +470,7 @@
         const fileInfo = document.getElementById('fileInfo');
         const fileName = document.getElementById('fileName');
         const fileSize = document.getElementById('fileSize');
+        const fileType = document.getElementById('fileType');
         const processBtn = document.getElementById('processBtn');
         const progressContainer = document.getElementById('progressContainer');
         const progressFill = document.getElementById('progressFill');
@@ -446,7 +482,8 @@
         const ctx = renderCanvas.getContext('2d');
 
         let selectedFile = null;
-        let processedPdfBytes = null;
+        let processedBytes = null;
+        let outputType = 'pdf';
 
         function formatSize(bytes) {
             if (bytes < 1024) return bytes + ' B';
@@ -454,17 +491,26 @@
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
 
+        function getFileType(file) {
+            if (file.name.toLowerCase().endsWith('.pdf')) return 'pdf';
+            if (file.name.toLowerCase().endsWith('.pptx')) return 'pptx';
+            return null;
+        }
+
         function handleFile(file) {
             if (!file) return;
             
-            if (file.type !== 'application/pdf') {
-                showError('Please select a PDF file');
+            const type = getFileType(file);
+            if (!type) {
+                showError('Please select a PDF or PowerPoint (.pptx) file');
                 return;
             }
             
             selectedFile = file;
+            outputType = type;
             fileName.textContent = file.name;
             fileSize.textContent = formatSize(file.size);
+            fileType.textContent = type === 'pdf' ? 'PDF Document' : 'PowerPoint Presentation';
             fileInfo.classList.add('visible');
             uploadZone.classList.add('has-file');
             processBtn.disabled = false;
@@ -490,88 +536,164 @@
         function applyThreshold(imageData, threshold = 180) {
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
-                // Convert to grayscale
                 const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-                // Apply threshold
                 const value = gray > threshold ? 255 : 0;
-                data[i] = value;     // R
-                data[i + 1] = value; // G
-                data[i + 2] = value; // B
-                // Alpha stays the same
+                data[i] = value;
+                data[i + 1] = value;
+                data[i + 2] = value;
             }
             return imageData;
         }
 
+        // Process image blob and return thresholded blob
+        async function processImageBlob(blob) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    renderCanvas.width = img.width;
+                    renderCanvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    const imageData = ctx.getImageData(0, 0, img.width, img.height);
+                    applyThreshold(imageData);
+                    ctx.putImageData(imageData, 0, 0);
+                    
+                    renderCanvas.toBlob(resolve, 'image/png');
+                };
+                img.onerror = reject;
+                img.src = URL.createObjectURL(blob);
+            });
+        }
+
         async function processPDF() {
+            const arrayBuffer = await selectedFile.arrayBuffer();
+            const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const numPages = pdfDoc.numPages;
+            
+            updateProgress(10, `Processing ${numPages} pages...`);
+
+            const newPdf = await PDFLib.PDFDocument.create();
+            const scale = 2;
+
+            for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                const progress = 10 + (pageNum / numPages) * 80;
+                updateProgress(progress, `Processing page ${pageNum} of ${numPages}...`);
+
+                const page = await pdfDoc.getPage(pageNum);
+                const viewport = page.getViewport({ scale });
+
+                renderCanvas.width = viewport.width;
+                renderCanvas.height = viewport.height;
+
+                await page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                }).promise;
+
+                const imageData = ctx.getImageData(0, 0, renderCanvas.width, renderCanvas.height);
+                applyThreshold(imageData);
+                ctx.putImageData(imageData, 0, 0);
+
+                const pngDataUrl = renderCanvas.toDataURL('image/png');
+                const pngBytes = await fetch(pngDataUrl).then(res => res.arrayBuffer());
+
+                const image = await newPdf.embedPng(pngBytes);
+                const pdfPage = newPdf.addPage([viewport.width / scale, viewport.height / scale]);
+                pdfPage.drawImage(image, {
+                    x: 0,
+                    y: 0,
+                    width: viewport.width / scale,
+                    height: viewport.height / scale,
+                });
+            }
+
+            updateProgress(95, 'Generating PDF...');
+            processedBytes = await newPdf.save();
+            
+            document.getElementById('pagesProcessed').textContent = numPages;
+            document.getElementById('pagesLabel').textContent = 'Pages';
+            
+            return numPages;
+        }
+
+        async function processPPTX() {
+            const arrayBuffer = await selectedFile.arrayBuffer();
+            const zip = await JSZip.loadAsync(arrayBuffer);
+            
+            // Find all images in the PPTX
+            const mediaFiles = [];
+            zip.forEach((relativePath, file) => {
+                if (relativePath.startsWith('ppt/media/') && !file.dir) {
+                    const ext = relativePath.toLowerCase();
+                    if (ext.endsWith('.png') || ext.endsWith('.jpg') || ext.endsWith('.jpeg')) {
+                        mediaFiles.push({ path: relativePath, file: file });
+                    }
+                }
+            });
+
+            if (mediaFiles.length === 0) {
+                // No images to process, just return the original
+                updateProgress(50, 'No images found to optimize...');
+                processedBytes = new Uint8Array(arrayBuffer);
+                document.getElementById('pagesProcessed').textContent = '0';
+                document.getElementById('pagesLabel').textContent = 'Images';
+                return 0;
+            }
+
+            updateProgress(10, `Processing ${mediaFiles.length} images...`);
+
+            // Process each image
+            for (let i = 0; i < mediaFiles.length; i++) {
+                const progress = 10 + ((i + 1) / mediaFiles.length) * 80;
+                updateProgress(progress, `Processing image ${i + 1} of ${mediaFiles.length}...`);
+
+                const { path, file } = mediaFiles[i];
+                const blob = await file.async('blob');
+                
+                try {
+                    const processedBlob = await processImageBlob(blob);
+                    const processedArray = await processedBlob.arrayBuffer();
+                    
+                    // Replace the image in the zip - keep original extension for compatibility
+                    // but store as PNG data
+                    zip.file(path, processedArray);
+                } catch (e) {
+                    console.warn(`Could not process image ${path}:`, e);
+                }
+            }
+
+            updateProgress(95, 'Generating PowerPoint...');
+            processedBytes = await zip.generateAsync({ type: 'uint8array' });
+            
+            document.getElementById('pagesProcessed').textContent = mediaFiles.length;
+            document.getElementById('pagesLabel').textContent = 'Images';
+            
+            return mediaFiles.length;
+        }
+
+        async function processFile() {
             if (!selectedFile) return;
 
             processBtn.disabled = true;
             uploadZone.classList.add('processing');
             progressContainer.classList.add('visible');
             resultContainer.classList.remove('visible');
-            updateProgress(0, 'Loading PDF...');
+            updateProgress(0, 'Loading file...');
             hideError();
 
             try {
-                const arrayBuffer = await selectedFile.arrayBuffer();
-                const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                const numPages = pdfDoc.numPages;
+                let itemsProcessed;
                 
-                updateProgress(10, `Processing ${numPages} pages...`);
-
-                // Create new PDF
-                const newPdf = await PDFLib.PDFDocument.create();
-                const scale = 2; // Render at 2x for better quality
-
-                for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-                    const progress = 10 + (pageNum / numPages) * 80;
-                    updateProgress(progress, `Processing page ${pageNum} of ${numPages}...`);
-
-                    // Get page
-                    const page = await pdfDoc.getPage(pageNum);
-                    const viewport = page.getViewport({ scale });
-
-                    // Set canvas size
-                    renderCanvas.width = viewport.width;
-                    renderCanvas.height = viewport.height;
-
-                    // Render page to canvas
-                    await page.render({
-                        canvasContext: ctx,
-                        viewport: viewport
-                    }).promise;
-
-                    // Get image data and apply threshold
-                    const imageData = ctx.getImageData(0, 0, renderCanvas.width, renderCanvas.height);
-                    const thresholdedData = applyThreshold(imageData);
-                    ctx.putImageData(thresholdedData, 0, 0);
-
-                    // Convert canvas to PNG
-                    const pngDataUrl = renderCanvas.toDataURL('image/png');
-                    const pngBytes = await fetch(pngDataUrl).then(res => res.arrayBuffer());
-
-                    // Embed in new PDF
-                    const image = await newPdf.embedPng(pngBytes);
-                    const pdfPage = newPdf.addPage([viewport.width / scale, viewport.height / scale]);
-                    pdfPage.drawImage(image, {
-                        x: 0,
-                        y: 0,
-                        width: viewport.width / scale,
-                        height: viewport.height / scale,
-                    });
+                if (outputType === 'pdf') {
+                    itemsProcessed = await processPDF();
+                } else {
+                    itemsProcessed = await processPPTX();
                 }
-
-                updateProgress(95, 'Generating PDF...');
-
-                // Save the new PDF
-                processedPdfBytes = await newPdf.save();
 
                 updateProgress(100, 'Done!');
 
-                // Show results
                 document.getElementById('originalSize').textContent = formatSize(selectedFile.size);
-                document.getElementById('newSize').textContent = formatSize(processedPdfBytes.length);
-                document.getElementById('pagesProcessed').textContent = numPages;
+                document.getElementById('newSize').textContent = formatSize(processedBytes.length);
 
                 setTimeout(() => {
                     progressContainer.classList.remove('visible');
@@ -581,22 +703,30 @@
                 }, 500);
 
             } catch (error) {
-                console.error('Error processing PDF:', error);
+                console.error('Error processing file:', error);
                 progressContainer.classList.remove('visible');
                 uploadZone.classList.remove('processing');
-                showError('Error processing PDF: ' + error.message);
+                showError('Error processing file: ' + error.message);
                 processBtn.disabled = false;
             }
         }
 
-        function downloadPDF() {
-            if (!processedPdfBytes) return;
+        function downloadFile() {
+            if (!processedBytes) return;
 
-            const blob = new Blob([processedPdfBytes], { type: 'application/pdf' });
+            const mimeType = outputType === 'pdf' 
+                ? 'application/pdf' 
+                : 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+            
+            const blob = new Blob([processedBytes], { type: mimeType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = selectedFile.name.replace('.pdf', '_inkmin.pdf');
+            
+            const ext = outputType === 'pdf' ? '.pdf' : '.pptx';
+            const baseName = selectedFile.name.replace(/\.(pdf|pptx)$/i, '');
+            a.download = `${baseName}_inkmin${ext}`;
+            
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -625,8 +755,8 @@
             handleFile(e.dataTransfer.files[0]);
         });
 
-        processBtn.addEventListener('click', processPDF);
-        downloadBtn.addEventListener('click', downloadPDF);
+        processBtn.addEventListener('click', processFile);
+        downloadBtn.addEventListener('click', downloadFile);
     </script>
 </body>
 </html>
