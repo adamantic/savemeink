@@ -141,6 +141,33 @@
         .preview-labels span:first-child { color: #f87171; }
         .preview-labels span:last-child { color: #4ade80; }
 
+        /* Demo Section */
+        .demo-section {
+            margin-top: 3rem; padding: 2rem; 
+            background: rgba(255, 255, 255, 0.02); border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .demo-title {
+            font-size: 1.5rem; font-weight: 600; text-align: center; margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .demo-subtitle { text-align: center; color: #a0a0b0; margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .demo-container {
+            position: relative; border-radius: 12px; overflow: hidden;
+            background: #1a1a2e; max-width: 100%;
+        }
+        .demo-image {
+            width: 100%; height: auto; display: block;
+            border-radius: 8px;
+        }
+        .demo-labels {
+            display: flex; justify-content: space-between; margin-top: 0.75rem;
+            font-size: 0.85rem; color: #707080;
+        }
+        .demo-labels span:first-child { color: #f87171; }
+        .demo-labels span:last-child { color: #4ade80; }
+
         .features { margin-top: 4rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
         .feature {
             text-align: center; padding: 1.5rem 1rem;
@@ -271,6 +298,19 @@
 
         <div class="privacy-note">
             🔒 <strong>100% Private:</strong> Your files are processed entirely in your browser. Nothing is uploaded to any server.
+        </div>
+
+        <!-- Demo Preview Section -->
+        <div class="demo-section">
+            <h2 class="demo-title">📸 See How It Works</h2>
+            <p class="demo-subtitle">Drag the slider to compare original vs ink-optimized</p>
+            <div class="demo-container" id="demoContainer">
+                <img class="demo-image demo-before" src="/demo-preview.jpg" alt="Demo comparison">
+            </div>
+            <div class="demo-labels">
+                <span>◀ Original (more ink)</span>
+                <span>Optimized (less ink) ▶</span>
+            </div>
         </div>
 
         <div class="features">
