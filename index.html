@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Me Ink - Reduce PDF Ink Usage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            margin-top: 3rem;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.3));
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            text-align: center;
+            color: #a0a0b0;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        .upload-zone {
+            border: 2px dashed #3a3a5a;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+            transform: scale(1.01);
+        }
+
+        .upload-zone.has-file {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.05);
+        }
+
+        .upload-zone.processing {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-hint {
+            font-size: 0.9rem;
+            color: #707080;
+        }
+
+        .file-info {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .file-info.visible {
+            display: block;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #fff;
+            word-break: break-all;
+        }
+
+        .file-size {
+            font-size: 0.85rem;
+            color: #707080;
+            margin-top: 0.25rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+            display: none;
+        }
+
+        .btn-success.visible {
+            display: block;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(74, 222, 128, 0.3);
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 1.5rem;
+        }
+
+        .progress-container.visible {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 0.75rem;
+            color: #a0a0b0;
+            font-size: 0.9rem;
+        }
+
+        .result-container {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(74, 222, 128, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+        }
+
+        .result-container.visible {
+            display: block;
+        }
+
+        .result-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4ade80;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #a0a0b0;
+            margin-top: 0.25rem;
+        }
+
+        .features {
+            margin-top: 4rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            font-size: 0.85rem;
+            color: #707080;
+        }
+
+        .error-message {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 8px;
+            color: #f87171;
+            text-align: center;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        .privacy-note {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #606070;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+        }
+
+        .privacy-note strong {
+            color: #4ade80;
+        }
+
+        footer {
+            margin-top: auto;
+            padding-top: 4rem;
+            text-align: center;
+            color: #505060;
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                margin-top: 2rem;
+            }
+
+            .result-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        canvas {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon">🖨️</div>
+            <h1>Save Me Ink</h1>
+        </div>
+        <p class="tagline">Convert PDFs to ink-minimized versions. Save ink, save money.</p>
+
+        <div class="upload-zone" id="uploadZone">
+            <div class="upload-icon">📄</div>
+            <p class="upload-text">Drop your PDF here or click to upload</p>
+            <p class="upload-hint">100% private — processed in your browser</p>
+            <input type="file" id="fileInput" accept=".pdf,application/pdf">
+        </div>
+
+        <div class="file-info" id="fileInfo">
+            <div class="file-name" id="fileName"></div>
+            <div class="file-size" id="fileSize"></div>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <button class="btn btn-primary" id="processBtn" disabled>
+            ✨ Minimize Ink Usage
+        </button>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p class="progress-text" id="progressText">Processing...</p>
+        </div>
+
+        <div class="result-container" id="resultContainer">
+            <div class="result-stats">
+                <div class="stat">
+                    <div class="stat-value" id="originalSize">-</div>
+                    <div class="stat-label">Original</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="newSize">-</div>
+                    <div class="stat-label">Optimized</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="pagesProcessed">-</div>
+                    <div class="stat-label">Pages</div>
+                </div>
+            </div>
+            <button class="btn btn-success visible" id="downloadBtn">
+                ⬇️ Download Ink-Minimized PDF
+            </button>
+        </div>
+
+        <div class="privacy-note">
+            🔒 <strong>100% Private:</strong> Your files are processed entirely in your browser. Nothing is uploaded to any server.
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">💰</div>
+                <div class="feature-title">Save Money</div>
+                <div class="feature-desc">Reduce ink usage significantly</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <div class="feature-title">100% Private</div>
+                <div class="feature-desc">Files never leave your device</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Fast</div>
+                <div class="feature-desc">Processed locally in seconds</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Made with 🦀 by <a href="https://github.com/adamantic" target="_blank">adamantic</a>
+    </footer>
+
+    <canvas id="renderCanvas"></canvas>
+
+    <script>
+        // Set up pdf.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const processBtn = document.getElementById('processBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const resultContainer = document.getElementById('resultContainer');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const renderCanvas = document.getElementById('renderCanvas');
+        const ctx = renderCanvas.getContext('2d');
+
+        let selectedFile = null;
+        let processedPdfBytes = null;
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function handleFile(file) {
+            if (!file) return;
+            
+            if (file.type !== 'application/pdf') {
+                showError('Please select a PDF file');
+                return;
+            }
+            
+            selectedFile = file;
+            fileName.textContent = file.name;
+            fileSize.textContent = formatSize(file.size);
+            fileInfo.classList.add('visible');
+            uploadZone.classList.add('has-file');
+            processBtn.disabled = false;
+            hideError();
+            resultContainer.classList.remove('visible');
+        }
+
+        function showError(msg) {
+            errorMessage.textContent = msg;
+            errorMessage.classList.add('visible');
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('visible');
+        }
+
+        function updateProgress(percent, text) {
+            progressFill.style.width = percent + '%';
+            progressText.textContent = text;
+        }
+
+        // Apply threshold to make image black and white
+        function applyThreshold(imageData, threshold = 180) {
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                // Convert to grayscale
+                const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+                // Apply threshold
+                const value = gray > threshold ? 255 : 0;
+                data[i] = value;     // R
+                data[i + 1] = value; // G
+                data[i + 2] = value; // B
+                // Alpha stays the same
+            }
+            return imageData;
+        }
+
+        async function processPDF() {
+            if (!selectedFile) return;
+
+            processBtn.disabled = true;
+            uploadZone.classList.add('processing');
+            progressContainer.classList.add('visible');
+            resultContainer.classList.remove('visible');
+            updateProgress(0, 'Loading PDF...');
+            hideError();
+
+            try {
+                const arrayBuffer = await selectedFile.arrayBuffer();
+                const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const numPages = pdfDoc.numPages;
+                
+                updateProgress(10, `Processing ${numPages} pages...`);
+
+                // Create new PDF
+                const newPdf = await PDFLib.PDFDocument.create();
+                const scale = 2; // Render at 2x for better quality
+
+                for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                    const progress = 10 + (pageNum / numPages) * 80;
+                    updateProgress(progress, `Processing page ${pageNum} of ${numPages}...`);
+
+                    // Get page
+                    const page = await pdfDoc.getPage(pageNum);
+                    const viewport = page.getViewport({ scale });
+
+                    // Set canvas size
+                    renderCanvas.width = viewport.width;
+                    renderCanvas.height = viewport.height;
+
+                    // Render page to canvas
+                    await page.render({
+                        canvasContext: ctx,
+                        viewport: viewport
+                    }).promise;
+
+                    // Get image data and apply threshold
+                    const imageData = ctx.getImageData(0, 0, renderCanvas.width, renderCanvas.height);
+                    const thresholdedData = applyThreshold(imageData);
+                    ctx.putImageData(thresholdedData, 0, 0);
+
+                    // Convert canvas to PNG
+                    const pngDataUrl = renderCanvas.toDataURL('image/png');
+                    const pngBytes = await fetch(pngDataUrl).then(res => res.arrayBuffer());
+
+                    // Embed in new PDF
+                    const image = await newPdf.embedPng(pngBytes);
+                    const pdfPage = newPdf.addPage([viewport.width / scale, viewport.height / scale]);
+                    pdfPage.drawImage(image, {
+                        x: 0,
+                        y: 0,
+                        width: viewport.width / scale,
+                        height: viewport.height / scale,
+                    });
+                }
+
+                updateProgress(95, 'Generating PDF...');
+
+                // Save the new PDF
+                processedPdfBytes = await newPdf.save();
+
+                updateProgress(100, 'Done!');
+
+                // Show results
+                document.getElementById('originalSize').textContent = formatSize(selectedFile.size);
+                document.getElementById('newSize').textContent = formatSize(processedPdfBytes.length);
+                document.getElementById('pagesProcessed').textContent = numPages;
+
+                setTimeout(() => {
+                    progressContainer.classList.remove('visible');
+                    resultContainer.classList.add('visible');
+                    uploadZone.classList.remove('processing');
+                    processBtn.disabled = false;
+                }, 500);
+
+            } catch (error) {
+                console.error('Error processing PDF:', error);
+                progressContainer.classList.remove('visible');
+                uploadZone.classList.remove('processing');
+                showError('Error processing PDF: ' + error.message);
+                processBtn.disabled = false;
+            }
+        }
+
+        function downloadPDF() {
+            if (!processedPdfBytes) return;
+
+            const blob = new Blob([processedPdfBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = selectedFile.name.replace('.pdf', '_inkmin.pdf');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Event listeners
+        uploadZone.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            handleFile(e.target.files[0]);
+        });
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        processBtn.addEventListener('click', processPDF);
+        downloadBtn.addEventListener('click', downloadPDF);
+    </script>
+</body>
+</html>
