@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save Me Ink - Reduce PDF & PowerPoint Ink Usage</title>
+    <title>Save Me Ink - Reduce PDF, PowerPoint & Image Ink Usage</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <meta name="theme-color" content="#1a1a2e">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -209,8 +209,10 @@
             <div class="supported-formats">
                 <span class="format-badge">PDF</span>
                 <span class="format-badge">PPTX</span>
+                <span class="format-badge">PNG</span>
+                <span class="format-badge">JPG</span>
             </div>
-            <input type="file" id="fileInput" accept=".pdf,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation">
+            <input type="file" id="fileInput" accept=".pdf,.pptx,.png,.jpg,.jpeg,.webp,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,image/png,image/jpeg,image/webp">
         </div>
 
         <div class="file-info" id="fileInfo">
@@ -351,21 +353,24 @@
         }
 
         function getFileType(file) {
-            if (file.name.toLowerCase().endsWith('.pdf')) return 'pdf';
-            if (file.name.toLowerCase().endsWith('.pptx')) return 'pptx';
+            const name = file.name.toLowerCase();
+            if (name.endsWith('.pdf')) return 'pdf';
+            if (name.endsWith('.pptx')) return 'pptx';
+            if (name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.webp')) return 'image';
             return null;
         }
 
         function handleFile(file) {
             if (!file) return;
             const type = getFileType(file);
-            if (!type) { showError('Please select a PDF or PowerPoint (.pptx) file'); return; }
+            if (!type) { showError('Please select a PDF, PowerPoint (.pptx), or image file (PNG, JPG)'); return; }
             
             selectedFile = file;
             outputType = type;
             fileName.textContent = file.name;
             fileSize.textContent = formatSize(file.size);
-            fileType.textContent = type === 'pdf' ? 'PDF Document' : 'PowerPoint Presentation';
+            const typeLabels = { pdf: 'PDF Document', pptx: 'PowerPoint Presentation', image: 'Image File' };
+            fileType.textContent = typeLabels[type] || type.toUpperCase();
             fileInfo.classList.add('visible');
             uploadZone.classList.add('has-file');
             processBtn.disabled = false;
@@ -619,6 +624,53 @@
             return mediaFiles.length;
         }
 
+        async function processImageFile() {
+            updateProgress(10, 'Loading image...');
+            
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = async () => {
+                    try {
+                        updateProgress(30, 'Processing image...');
+                        
+                        // Store original for preview
+                        beforeCanvas.width = img.width;
+                        beforeCanvas.height = img.height;
+                        beforeCtx.drawImage(img, 0, 0);
+                        const beforeDataUrl = beforeCanvas.toDataURL('image/png');
+                        
+                        // Process the image
+                        tempCanvas.width = img.width;
+                        tempCanvas.height = img.height;
+                        tempCtx.drawImage(img, 0, 0);
+                        
+                        renderCanvas.width = img.width;
+                        renderCanvas.height = img.height;
+                        processImage(tempCtx, ctx, img.width, img.height);
+                        
+                        updateProgress(70, 'Generating output...');
+                        const afterDataUrl = renderCanvas.toDataURL('image/png');
+                        
+                        previewPages = [{ before: beforeDataUrl, after: afterDataUrl }];
+                        
+                        // Convert to bytes
+                        const response = await fetch(afterDataUrl);
+                        const blob = await response.blob();
+                        processedBytes = new Uint8Array(await blob.arrayBuffer());
+                        
+                        document.getElementById('pagesProcessed').textContent = '1';
+                        document.getElementById('pagesLabel').textContent = 'Image';
+                        
+                        resolve(1);
+                    } catch (e) {
+                        reject(e);
+                    }
+                };
+                img.onerror = () => reject(new Error('Failed to load image'));
+                img.src = URL.createObjectURL(selectedFile);
+            });
+        }
+
         async function processFile() {
             if (!selectedFile) return;
 
@@ -633,8 +685,10 @@
             try {
                 if (outputType === 'pdf') {
                     await processPDF();
-                } else {
+                } else if (outputType === 'pptx') {
                     await processPPTX();
+                } else if (outputType === 'image') {
+                    await processImageFile();
                 }
 
                 updateProgress(100, 'Done!');
@@ -661,13 +715,13 @@
 
         function downloadFile() {
             if (!processedBytes) return;
-            const mimeType = outputType === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-            const blob = new Blob([processedBytes], { type: mimeType });
+            const mimeTypes = { pdf: 'application/pdf', pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', image: 'image/png' };
+            const extensions = { pdf: '.pdf', pptx: '.pptx', image: '.png' };
+            const blob = new Blob([processedBytes], { type: mimeTypes[outputType] });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            const ext = outputType === 'pdf' ? '.pdf' : '.pptx';
-            a.download = selectedFile.name.replace(/\.(pdf|pptx)$/i, '') + '_inkmin' + ext;
+            a.download = selectedFile.name.replace(/\.(pdf|pptx|png|jpg|jpeg|webp)$/i, '') + '_inkmin' + extensions[outputType];
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
